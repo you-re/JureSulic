@@ -1,0 +1,78 @@
+@font-face {
+    font-family: 'ABCMonumentGrotesk';
+    src: url('//cdn.abcdinamo.com/css/fonts/ABCMonumentGrotesk-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    font-family: 'ABCMonumentGrotesk', Arial, sans-serif;
+    background-color: #111;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+}
+
+.navbar .title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.navbar .menu {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.navbar .menu a {
+    color: inherit;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+
+.menu-item {
+    position: relative;
+    color: inherit;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.menu-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    left: 0;
+    bottom: -2px;
+    transition: width 0.3s ease;
+}
+
+.menu-item:hover::after {
+    width: 100%;
+}
+
+.hamburger {
+    z-index: 1001;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
