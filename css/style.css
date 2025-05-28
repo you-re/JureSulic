@@ -1,78 +1,143 @@
-@font-face {
-    font-family: 'ABCMonumentGrotesk';
-    src: url('//cdn.abcdinamo.com/css/fonts/ABCMonumentGrotesk-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 body {
-    margin: 0;
-    font-family: 'ABCMonumentGrotesk', Arial, sans-serif;
-    background-color: #111;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 3vh;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 2.5vh;
+  min-height: 100vh;
+  min-width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.menu li a {
+  text-decoration: none;
+  color: #fff;
+  padding: 0;
+  border-radius: 0;
+  position: relative;
+  color: #fff;
+  background-color: #000;
+  transition: color 0.3s, background-color 0.3s;
+}
+.menu li a::before, .menu li a::after {
+  content: "";
+  position: absolute;
+  background: url("../assets/crosshair-dark.svg") no-repeat center center;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.menu li a::before {
+  top: 35%;
+  left: 35%;
+  scale: 0.1;
+  transition: opacity 0.3s, top 0.3s, left 0.3s, scale 0.3s;
+}
+.menu li a::after {
+  bottom: 35%;
+  right: 35%;
+  scale: 0.1;
+  transition: opacity 0.3s, bottom 0.3s, right 0.3s, scale 0.3s;
+}
+.menu li a:hover::before {
+  opacity: 1;
+  top: -2rem;
+  left: -2rem;
+  scale: 1;
+}
+.menu li a:hover::after {
+  opacity: 1;
+  bottom: -2rem;
+  right: -2rem;
+  scale: 1;
+}
+.menu li a:hover {
+  color: #000;
+  background-color: #fff;
+}
+
+.footer {
+  position: absolute;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  font-size: 0.75rem;
+}
+.footer .footer-content {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90vw;
+  padding-left: 5vw;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #fff;
+    color: #000;
+  }
+  .menu {
+    background-color: transparent;
+    color: #000;
+  }
+  .menu li a {
+    background-color: #fff;
+    color: #000;
+  }
+  .menu li a::before, .menu li a::after {
+    background: url("../assets/crosshair-light.svg") no-repeat center center;
+  }
+  .menu li a:hover {
     color: #fff;
-    padding: 10px 20px;
+    background-color: #000;
+  }
 }
-
-.navbar .title {
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
-.navbar .menu {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: #333;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1000;
-}
-
-.navbar .menu a {
-    color: inherit;
-    text-decoration: none;
-    padding: 10px 20px;
-    display: block;
-    transition: background-color 0.3s ease;
-}
-
-.menu-item {
-    position: relative;
-    color: inherit;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.menu-item::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    background: currentColor;
-    left: 0;
-    bottom: -2px;
-    transition: width 0.3s ease;
-}
-
-.menu-item:hover::after {
-    width: 100%;
-}
-
-.hamburger {
-    z-index: 1001;
-    cursor: pointer;
-    font-size: 1.5rem;
-}
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000;
+    color: #fff;
+  }
+  .menu {
+    background-color: transparent;
+    color: #000;
+  }
+  .menu li a {
+    background-color: #000;
+    color: #fff;
+  }
+  .menu li a::before, .menu li a::after {
+    background: url("../assets/crosshair-dark.svg") no-repeat center center;
+  }
+  .menu li a:hover {
+    color: #000;
+    background-color: #fff;
+  }
+}/*# sourceMappingURL=style.css.map */

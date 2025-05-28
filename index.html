@@ -5,19 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jure Sulic</title>
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+        
 </head>
+
 <body>
-    <div class="navbar">
-        <div class="title">Jure Sulic</div>
-        <div class="hamburger" onclick="toggleMenu()">☰</div>
-        <div class="menu" id="menu">
-            <a href="#home" class="menu-item">Home</a>
-            <a href="#about" class="menu-item">About</a>
-            <a href="#contact" class="menu-item">Contact</a>
+    <div id="threejs-container" style="width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:-1;"></div>
+
+    <ul class="menu">
+        <li><a href="#Projects" style="--word_len: 6;">Projects</a></li>
+        <li><a href="#About" style="--word_len: 4.5;">About</a></li>
+        <li><a href="#Contact" style="--word_len: 6;">Contact</a></li>
+    </ul>
+
+    <footer>
+        <div class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Jure Sulič</p>
+            </div>
         </div>
-        <style>
-        </style>
-    </div>
-    <script src="js/script.js"></script>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+    <script type="module" src="js/background.js"></script>
 </body>
 </html>
