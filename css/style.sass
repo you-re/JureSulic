@@ -1,0 +1,153 @@
+// Variables
+$background-dark: #000
+$background-light: #fff
+$background-gray: #333
+
+$color-dark: #fff
+$color-light: #000
+
+$hamburger-dark: #fff
+$hamburger-light: #000
+
+$maxwidth: 500px
+
+$crosshair-size: 1.5rem
+$crosshair-placement: 35%
+$crosshair-hover-placement: -2rem
+
+
+// Base styles
+body
+    height: 100vh
+    width: 100vw
+    padding: 0
+    margin: 0
+    font-family: "Manrope", sans-serif
+    font-optical-sizing: auto
+    font-weight: 100
+    font-style: normal
+    background-color: $background-dark
+    color: $color-dark
+    display: flex
+    flex-direction: column
+    justify-content: center
+    font-size: 3vh
+
+.menu
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-direction: column
+    list-style: none
+    padding: 0
+    margin: 0
+    gap: 2.5vh
+    min-height: 100vh
+    min-width: 100vw
+    position: absolute
+    top: 0
+    left: 0
+
+    li a
+        text-decoration: none
+        color: $color-dark
+        padding: 0
+        border-radius: 0
+        position: relative
+        color: $color-dark
+        background-color: $background-dark
+        transition: color 0.3s, background-color 0.3s
+
+        // Crosshair SVG icon - Bottom Left (use ::before)
+        &::before,
+        &::after
+            content: ""
+            position: absolute
+            background: url("../assets/crosshair-dark.svg") no-repeat center center
+            background-size: contain
+            opacity: 0
+            pointer-events: none
+            width: $crosshair-size
+            height: $crosshair-size
+
+        &::before
+            top: $crosshair-placement
+            left: $crosshair-placement
+            scale: 0.1
+            transition: opacity 0.3s, top 0.3s, left 0.3s, scale 0.3s
+            
+
+        &::after
+            bottom: $crosshair-placement
+            right: $crosshair-placement
+            scale: 0.1
+            transition: opacity 0.3s, bottom 0.3s, right 0.3s, scale 0.3s
+            
+
+        &:hover::before
+            opacity: 1
+            top: $crosshair-hover-placement
+            left: $crosshair-hover-placement
+            scale: 1
+
+        &:hover::after
+            opacity: 1
+            bottom: $crosshair-hover-placement
+            right: $crosshair-hover-placement
+            scale: 1
+
+    li a:hover
+        color: $background-dark
+        background-color: $color-dark
+
+// Footer
+.footer
+    position: absolute
+    display: inline-flex
+    justify-content: space-between
+    align-items: center
+    background-color: $background-gray
+    color: $color-dark
+    width: 100vw
+    left: 0
+    bottom: 0
+    font-size: 0.75rem
+    
+    .footer-content
+        display: inline-flex
+        justify-content: space-between
+        align-items: center
+        width: 90vw
+        padding-left: 5vw
+
+@media (prefers-color-scheme: light)
+    body
+        background-color: $background-light
+        color: $color-light
+    .menu
+        background-color: transparent
+        color: $color-light
+    .menu li a
+        background-color: $background-light
+        color: $color-light
+        &::before, &::after
+            background: url("../assets/crosshair-light.svg") no-repeat center center
+    .menu li a:hover
+        color: $background-light
+        background-color: $color-light
+
+@media (prefers-color-scheme: dark)
+    body
+        background-color: $background-dark
+        color: $color-dark
+    .menu
+        background-color: transparent
+        color: $color-light
+    .menu li a
+        background-color: $background-dark
+        color: $color-dark
+        &::before, &::after
+            background: url("../assets/crosshair-dark.svg") no-repeat center center
+    .menu li a:hover
+        color: $background-dark
+        background-color: $color-dark

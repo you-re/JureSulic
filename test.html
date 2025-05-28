@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        .hamburger {
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        .line {
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke: #000;
+            transition: all 500ms;
+        }
+
+        .top {
+            transform-origin: 26px 40px;
+        }
+
+        .middle {
+            stroke-dasharray: 60 60;
+        }
+
+        .bottom {
+            transform-origin: 26px 60px;
+        }
+
+        .hamburger.active .top {
+            transform: rotate(45deg);
+        }
+
+        .hamburger.active .middle {
+            stroke-dasharray: 1 60;
+            stroke-dashoffset: -30;
+        }
+
+        .hamburger.active .bottom {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+<div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <svg width="30" height="30" viewBox="0 0 100 100">
+        <path class="line top" d="M 20,30 H 80"/>
+        <path class="line middle" d="M 20,50 H 80" />
+        <path class="line bottom" d="M 20,70 H 80"/>
+    </svg>
+</div>
+<script>
+function toggleMenu() {
+    document.getElementById('hamburger').classList.toggle('active');
+}
+</script>
+</body>
+</html>
