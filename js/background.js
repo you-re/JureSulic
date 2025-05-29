@@ -18,9 +18,14 @@ const camera = new THREE.PerspectiveCamera(
     1000 // Far clipping plane
 );
 
+// Supersampling ratio
+const supersamplingRatio = 2.0;
+
 // Create a WebGL renderer with antialiasing and alpha transparency
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size
+renderer.setSize(window.innerWidth * supersamplingRatio, window.innerHeight * supersamplingRatio, false); // Set renderer size (supersampled)
+renderer.domElement.style.width = window.innerWidth + "px";
+renderer.domElement.style.height = window.innerHeight + "px";
 container.appendChild(renderer.domElement); // Add renderer to the DOM
 
 // Define grid size and number of divisions for the plane
@@ -63,9 +68,6 @@ const material = new THREE.ShaderMaterial({
 // Create a Points mesh from the geometry and material
 const pointsMesh = new THREE.Points(geometry, material);
 scene.add(pointsMesh); // Add points mesh to the scene
-
-// Create a SimplexNoise instance for animating the points
-const noise = new SimplexNoise();
 
 // Variable to keep track of camera orbit angle
 let angle = 0;

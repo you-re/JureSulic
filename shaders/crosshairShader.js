@@ -88,42 +88,48 @@ float snoise(vec3 v)
 
 export const CrosshairShader = {
     uniforms: {
-            'cameraPosition': { value: new THREE.Vector3(0, 0, 0) },
-            'crosshairThickness': { value: 0.1 },
-            'fogIntensity': { value: 4.0 },
-            'time': { value: 0.0 },
+		'cameraPosition': { value: new THREE.Vector3(0, 0, 0) },
+		'crosshairThickness': { value: 0.1 },
+		'fogIntensity': { value: 4.0 },
+		'time': { value: 0.0 },
+		'crosshairTexture': { value: new THREE.TextureLoader().load('../assets/crosshair-light.png') },
     },
 
     vertexShader: `
-            ${simplexNoiseGLSL}
-            varying float vDepth;
-            uniform float time;
-            void main() {
-                    vec3 seed = vec3(position * 0.1) + vec3(time + 13.5, time + 87.64, time + 98.21);
-                    float posy = snoise(seed) * 2.0;
-                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    vDepth = -mvPosition.z; // z-depth in view space (positive in front of camera)
-                    gl_PointSize = 10.0;
-                    gl_Position = projectionMatrix * mvPosition + vec4(0.0, posy, 0.0, 0.0);
+		${simplexNoiseGLSL}
+		varying float vDepth;
+		uniform float time;
+		uniform float supersamplingRatio;
+		void main() {
+			vec3 seed = vec3(position * 0.1) + vec3(time + 13.5, time + 87.64, time + 98.21);
+			float posy = snoise(seed) * 2.0;
+			vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+			vDepth = -mvPosition.z; // z-depth in view space (positive in front of camera)
+			gl_PointSize = 20.0;
+			gl_Position = projectionMatrix * mvPosition + vec4(0.0, posy, 0.0, 0.0);
             }
     `,
     
     fragmentShader: `
-            varying float vDepth;
-            uniform float crosshairThickness;
-            uniform float fogIntensity;
-            void main() {
-                    vec2 uv = gl_PointCoord; // Get point texture coordinates
-                    float h_line = abs(uv.y - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Horizontal line
-                    float v_line = abs(uv.x - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Vertical line
+		varying float vDepth;
+		uniform float crosshairThickness;
+		uniform float fogIntensity;
+		uniform sampler2D crosshairTexture;
+		void main() {
+			vec2 uv = gl_PointCoord; // Get point texture coordinates
+			// float h_line = abs(uv.y - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Horizontal line
+			// float v_line = abs(uv.x - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Vertical line
+			// float crosshair = 0.0; // Combine horizontal and vertical lines
 
-                    float crosshair = h_line * v_line; // Combine horizontal and vertical lines
+			uv = (uv - vec2(0.5, 0.5)) * vec2(2.0, 2.0); // Offset to center and normalize
+			float crosshair = min(abs(uv.x), abs(uv.y)) > crosshairThickness ? 1.0 : 0.0; // Crosshair effect
 
-                    if (crosshair > 0.1) discard;
-                    
-                    float alpha = pow(1.0 - smoothstep(20.0, 50.0, vDepth), fogIntensity); // Use vDepth for transparency
-                    gl_FragColor = vec4(crosshair, crosshair, crosshair, alpha);
-            }
+			if (crosshair > 0.1) discard;
+			
+			float alpha = pow(1.0 - smoothstep(20.0, 50.0, vDepth), fogIntensity); // Use vDepth for transparency
+			
+			gl_FragColor = vec4(crosshair, crosshair, crosshair, alpha);
+		}
     `,
     transparent: true,
 };
