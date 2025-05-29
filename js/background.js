@@ -1,6 +1,8 @@
+"use strict";
 // Import the SimplexNoise class for generating noise
 import { SimplexNoise } from '/js/simplexNoise.js';
 import { CrosshairShader } from '/shaders/crosshairShader.js';
+import * as THREE from '../three/build/three.module.js';
 
 // Get the container element for rendering Three.js
 const container = document.getElementById('threejs-container');
@@ -22,12 +24,15 @@ renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size
 container.appendChild(renderer.domElement); // Add renderer to the DOM
 
 // Define grid size and number of divisions for the plane
-const gridSize = 30;
-const divisions = 32;
+const gridSize = 40;
+const divisions = 64;
 
 // Create a buffer geometry for the points
 const geometry = new THREE.BufferGeometry();
 const positions = [];
+
+// Create a THREE.Clock instance for tracking time
+const clock = new THREE.Clock();
 
 // Generate grid points for the plane
 for (let i = 0; i <= divisions; i++) {
@@ -47,6 +52,7 @@ geometry.computeBoundingSphere(); // Compute bounding sphere for geometry
 const material = new THREE.ShaderMaterial({
     uniforms: {
         cameraPosition: { value: camera.position },
+        time: { value: 0.0 }, // Uniform for time
         ...(CrosshairShader.uniforms || {})
     },
     vertexShader: CrosshairShader.vertexShader,
@@ -63,27 +69,22 @@ const noise = new SimplexNoise();
 
 // Variable to keep track of camera orbit angle
 let angle = 0;
+let time = 0;
 
 // Animation loop
-function animate(time) {
+function animate() {
     // Update camera position to orbit around the center
-    angle += 0.0005;
+    const delta = clock.getDelta();
+    angle += delta * 0.1;
+    time += delta * 0.2; // Increment time for animation
+
     camera.position.x = Math.cos(angle) * 25;
     camera.position.y = 10 + Math.sin(angle * 0.5) * 5;
     camera.position.z = Math.sin(angle) * 25;
     camera.lookAt(0, 0, 0); // Look at the center
 
-    // Animate point positions using 3D noise for smooth wave effect
-    const pos = geometry.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-        const ix = i * 3;
-        const x = pos.getX(i);
-        const z = pos.getZ(i);
-        // Calculate new Y position using noise based on x, z, and time
-        const y = noise.noise3D(x * 0.15, z * 0.15, time * 0.00025) * 1.5;
-        pos.setY(i, y);
-    }
-    pos.needsUpdate = true; // Notify Three.js that positions have changed
+    // Update material's time
+    material.uniforms.time.value = time;
 
     renderer.render(scene, camera); // Render the scene
     requestAnimationFrame(animate); // Request next frame
