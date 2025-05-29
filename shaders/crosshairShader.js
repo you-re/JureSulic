@@ -93,6 +93,7 @@ export const CrosshairShader = {
 		'fogIntensity': { value: 4.0 },
 		'time': { value: 0.0 },
 		'crosshairTexture': { value: new THREE.TextureLoader().load('../assets/crosshair-light.png') },
+		'brightness': { value: 0.0 },
     },
 
     vertexShader: `
@@ -114,7 +115,9 @@ export const CrosshairShader = {
 		varying float vDepth;
 		uniform float crosshairThickness;
 		uniform float fogIntensity;
+		uniform float brightness;
 		uniform sampler2D crosshairTexture;
+
 		void main() {
 			vec2 uv = gl_PointCoord; // Get point texture coordinates
 			// float h_line = abs(uv.y - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Horizontal line
@@ -122,9 +125,11 @@ export const CrosshairShader = {
 			// float crosshair = 0.0; // Combine horizontal and vertical lines
 
 			uv = (uv - vec2(0.5, 0.5)) * vec2(2.0, 2.0); // Offset to center and normalize
-			float crosshair = min(abs(uv.x), abs(uv.y)) > crosshairThickness ? 1.0 : 0.0; // Crosshair effect
+			float crosshair = min(abs(uv.x), abs(uv.y)); // Crosshair effect
 
 			if (crosshair > 0.1) discard;
+
+			crosshair = crosshair > crosshairThickness ? brightness : 1.0 - brightness;
 			
 			float alpha = pow(1.0 - smoothstep(20.0, 50.0, vDepth), fogIntensity); // Use vDepth for transparency
 			

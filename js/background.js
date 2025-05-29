@@ -10,6 +10,10 @@ const container = document.getElementById('threejs-container');
 // Create a new Three.js scene
 const scene = new THREE.Scene();
 
+// Set brightness based on prefers-color-scheme
+let prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+let brightness = prefersLight ? 1.0 : 0.0;
+
 // Set up a perspective camera
 const camera = new THREE.PerspectiveCamera(
     50, // Field of view
@@ -65,6 +69,9 @@ const material = new THREE.ShaderMaterial({
     transparent: true
 });
 
+// Set material brightness
+material.uniforms.brightness.value = brightness;
+
 // Create a Points mesh from the geometry and material
 const pointsMesh = new THREE.Points(geometry, material);
 scene.add(pointsMesh); // Add points mesh to the scene
@@ -80,6 +87,13 @@ function animate(now) {
     requestAnimationFrame(animate);
     if (now - lastTime < 1000 / 60) return;
     lastTime = now;
+
+    // Set brightness based on prefers-color-scheme
+    prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    brightness = prefersLight ? 1.0 : 0.0;
+
+    // Set material brightness
+    material.uniforms.brightness.value = brightness;
 
     // Update camera position to orbit around the center
     const delta = clock.getDelta();
