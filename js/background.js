@@ -1,7 +1,7 @@
 "use strict";
 // Import the SimplexNoise class for generating noise
-import { SimplexNoise } from '/js/simplexNoise.js';
-import { CrosshairShader } from '/shaders/crosshairShader.js';
+import { SimplexNoise } from './simplexNoise.js';
+import { CrosshairShader } from '../shaders/crosshairShader.js';
 import * as THREE from '../three/build/three.module.js';
 
 // Get the container element for rendering Three.js
