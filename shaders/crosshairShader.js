@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Simplex noise implementation (2D and 3D) for GLSL.
+ * Simplex noise implementation 3D for GLSL.
  * Source: https://github.com/ashima/webgl-noise (public domain)
  */
 
@@ -99,7 +99,8 @@ export const CrosshairShader = {
             varying float vDepth;
             uniform float time;
             void main() {
-                    float posy = snoise(vec3(position * 0.1) + vec3(time + 13.5, time + 87.64, time + 98.21)) * 2.0;
+                    vec3 seed = vec3(position * 0.1) + vec3(time + 13.5, time + 87.64, time + 98.21);
+                    float posy = snoise(seed) * 2.0;
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                     vDepth = -mvPosition.z; // z-depth in view space (positive in front of camera)
                     gl_PointSize = 10.0;

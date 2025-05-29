@@ -70,9 +70,15 @@ const noise = new SimplexNoise();
 // Variable to keep track of camera orbit angle
 let angle = 0;
 let time = 0;
+let lastTime = 0;
 
 // Animation loop
-function animate() {
+function animate(now) {
+    // Cap to 60 FPS
+    requestAnimationFrame(animate);
+    if (now - lastTime < 1000 / 60) return;
+    lastTime = now;
+
     // Update camera position to orbit around the center
     const delta = clock.getDelta();
     angle += delta * 0.1;
@@ -87,7 +93,6 @@ function animate() {
     material.uniforms.time.value = time;
 
     renderer.render(scene, camera); // Render the scene
-    requestAnimationFrame(animate); // Request next frame
 }
 
 // Set initial camera position and orientation
