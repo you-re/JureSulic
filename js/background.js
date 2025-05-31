@@ -1,6 +1,5 @@
 "use strict";
 // Import the SimplexNoise class for generating noise
-import { SimplexNoise } from './simplexNoise.js';
 import { CrosshairShader } from '../shaders/crosshairShader.js';
 import * as THREE from '../three/build/three.module.js';
 
@@ -12,7 +11,10 @@ const scene = new THREE.Scene();
 
 // Set brightness based on prefers-color-scheme
 let prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-let brightness = prefersLight ? 1.0 : 0.0;
+let lightTheme = prefersLight ? 1.0 : 0.0;
+
+// Supersampling ratio
+const supersamplingRatio = 2.0;
 
 // Set up a perspective camera
 const camera = new THREE.PerspectiveCamera(
@@ -22,11 +24,16 @@ const camera = new THREE.PerspectiveCamera(
     1000 // Far clipping plane
 );
 
-// Supersampling ratio
-const supersamplingRatio = 2.0;
+// Set initial camera position and orientation
+camera.position.set(0, 15, 30);
+camera.lookAt(0, 0, 0);
 
 // Create a WebGL renderer with antialiasing and alpha transparency
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, multisample: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+if (renderer.capabilities.isWebGL2) {
+    renderer.getContext().canvas.setAttribute('msaa-samples', '4'); // Set 4x MSAA if supported
+}
 renderer.setSize(window.innerWidth * supersamplingRatio, window.innerHeight * supersamplingRatio, false); // Set renderer size (supersampled)
 renderer.domElement.style.width = window.innerWidth + "px";
 renderer.domElement.style.height = window.innerHeight + "px";
@@ -70,7 +77,10 @@ const material = new THREE.ShaderMaterial({
 });
 
 // Set material brightness
-material.uniforms.brightness.value = brightness;
+material.uniforms.brightness.value = lightTheme;
+
+// Track mouse position and pass to shader as 'mousePosition' uniform
+material.uniforms.mousePosition = { value: new THREE.Vector2(1.0, 0.0) };
 
 // Create a Points mesh from the geometry and material
 const pointsMesh = new THREE.Points(geometry, material);
@@ -81,6 +91,21 @@ let angle = 0;
 let time = 0;
 let lastTime = 0;
 
+
+function updateMousePosition(event) {
+    // Normalize mouse coordinates to [-1, 1]
+    const rect = renderer.domElement.getBoundingClientRect();
+    let x = ((event.clientX - rect.left) / rect.width);
+    let y = 1.0 - ((event.clientY - rect.top) / rect.height);
+    const screenRatio = window.innerWidth / window.innerHeight;
+
+    material.uniforms.mousePosition.value.set(x, y);
+    material.uniforms.screenRatio = { value: screenRatio }; // Pass screen ratio to shader
+
+}
+
+window.addEventListener('mousemove', updateMousePosition);
+
 // Animation loop
 function animate(now) {
     // Cap to 60 FPS
@@ -90,10 +115,10 @@ function animate(now) {
 
     // Set brightness based on prefers-color-scheme
     prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    brightness = prefersLight ? 1.0 : 0.0;
+    lightTheme = prefersLight ? 1.0 : 0.0;
 
     // Set material brightness
-    material.uniforms.brightness.value = brightness;
+    material.uniforms.brightness.value = lightTheme;
 
     // Update camera position to orbit around the center
     const delta = clock.getDelta();
@@ -111,10 +136,6 @@ function animate(now) {
     renderer.render(scene, camera); // Render the scene
 }
 
-// Set initial camera position and orientation
-camera.position.set(0, 15, 30);
-camera.lookAt(0, 0, 0);
-
 // Start the animation loop
 animate();
 
@@ -123,4 +144,5 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    material.uniforms.screenRatio.value = window.innerWidth / window.innerHeight; // Update screen ratio
 });

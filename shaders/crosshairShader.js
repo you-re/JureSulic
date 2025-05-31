@@ -88,52 +88,90 @@ float snoise(vec3 v)
 
 export const CrosshairShader = {
     uniforms: {
-		'cameraPosition': { value: new THREE.Vector3(0, 0, 0) },
+    'mousePosition' : { value: new THREE.Vector2(0, 0) },
 		'crosshairThickness': { value: 0.1 },
-		'fogIntensity': { value: 4.0 },
+		'fogIntensity': { value: 2.0 },
 		'time': { value: 0.0 },
-		'crosshairTexture': { value: new THREE.TextureLoader().load('../assets/crosshair-light.png') },
 		'brightness': { value: 0.0 },
+    'screenRatio': { value: window.innerWidth / window.innerHeight },
     },
 
     vertexShader: `
 		${simplexNoiseGLSL}
 		varying float vDepth;
+		varying vec2 vScreenCoord;
+
 		uniform float time;
 		uniform float supersamplingRatio;
+
 		void main() {
 			vec3 seed = vec3(position * 0.1) + vec3(time + 13.5, time + 87.64, time + 98.21);
 			float posy = snoise(seed) * 2.0;
 			vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 			vDepth = -mvPosition.z; // z-depth in view space (positive in front of camera)
-			gl_PointSize = 20.0;
-			gl_Position = projectionMatrix * mvPosition + vec4(0.0, posy, 0.0, 0.0);
-            }
+			gl_PointSize = 30.0;
+      vec4 displacement = projectionMatrix * mvPosition + vec4(0.0, posy, 0.0, 0.0);
+
+			gl_Position = displacement;
+      vScreenCoord = displacement.xy / displacement.w * 0.5 + 0.5;
+      }
     `,
     
     fragmentShader: `
 		varying float vDepth;
+		varying vec2 vScreenCoord;
+    
+    uniform float screenRatio;
+		uniform vec2 mousePosition;
 		uniform float crosshairThickness;
 		uniform float fogIntensity;
 		uniform float brightness;
 		uniform sampler2D crosshairTexture;
 
-		void main() {
+    // Remap function
+    float map(float value, float inMin, float inMax, float outMin, float outMax) {
+      return (value - inMin) / (inMax - inMin) * (outMax - outMin) + outMin;
+    }
+
+    void main() {
+      float dist;
+      float crosshair;
+      float x, y;
+
+			float alpha = pow(1.0 - smoothstep(20.0, 50.0, vDepth), fogIntensity); // Use vDepth for transparency
+
 			vec2 uv = gl_PointCoord; // Get point texture coordinates
-			// float h_line = abs(uv.y - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Horizontal line
-			// float v_line = abs(uv.x - 0.5) * 2.0 > crosshairThickness ? 1.0 : 0.0; // Vertical line
-			// float crosshair = 0.0; // Combine horizontal and vertical lines
 
 			uv = (uv - vec2(0.5, 0.5)) * vec2(2.0, 2.0); // Offset to center and normalize
-			float crosshair = min(abs(uv.x), abs(uv.y)); // Crosshair effect
 
-			if (crosshair > 0.1) discard;
+      x = abs(uv.x) > crosshairThickness ? 0.0 : 1.0;
+      y = abs(uv.y) > crosshairThickness ? 0.0 : 1.0;
 
-			crosshair = crosshair > crosshairThickness ? brightness : 1.0 - brightness;
-			
-			float alpha = pow(1.0 - smoothstep(20.0, 50.0, vDepth), fogIntensity); // Use vDepth for transparency
-			
-			gl_FragColor = vec4(crosshair, crosshair, crosshair, alpha);
+			crosshair = max(x, y); // Crosshair effect
+
+      float dot = x * y;
+
+      float uvLength = 1.0 - max(abs(uv.x), abs(uv.y));
+      crosshair *= uvLength; // Combine crosshair and distance
+
+      
+      vec2 sscoord = vScreenCoord;
+
+      vec2 screenRatio = (mousePosition - sscoord) * vec2(screenRatio, 1.0); // Fix screen aspect ratio so we get circle
+
+      dist = length(screenRatio);
+			dist = map(dist, 0.0, 0.25, 1.0, 0.0);
+      dist = clamp(dist, 0.0, 1.0);
+      dist = 1.0 - pow(dist, 2.0);
+
+      float color = dist < crosshair ? 1.0 : 0.0; // Combine crosshair and distance
+      color = max(color, dot);
+
+			if (color < 0.1) discard;
+
+      color = 1.0 - brightness;
+
+			gl_FragColor = vec4(color, color, color, alpha);
 		}
     `,
     transparent: true,

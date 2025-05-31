@@ -14,6 +14,20 @@ body {
   flex-direction: column;
   justify-content: center;
   font-size: 3vh;
+  overscroll-behavior: none;
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
+  /* Hide scrollbars */
+  scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 .menu {
@@ -29,7 +43,7 @@ body {
   min-height: 100vh;
   min-width: 100vw;
   position: absolute;
-  top: -2vh;
+  top: 0;
   left: 0;
 }
 .menu li a {
@@ -41,6 +55,7 @@ body {
   color: #fff;
   background-color: #000;
   transition: color 0.3s, background-color 0.3s;
+  cursor: pointer;
 }
 .menu li a::before, .menu li a::after {
   content: "";
@@ -81,20 +96,63 @@ body {
   background-color: #fff;
 }
 
-.footer {
+.content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   position: absolute;
-  display: inline-flex;
+  left: 100vw;
+  width: 100vw;
+  height: 100vh;
+  background: #f00;
+}
+.content img, .content video, .content audio {
+  max-width: 90vw;
+  max-height: 70vh;
+  border-radius: 0;
+  margin: 1rem;
+  display: block;
+}
+.content img {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.content video, .content audio {
+  outline: none;
+  background: #333;
+}
+.content figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.content figcaption {
+  font-size: 0.9em;
+  color: #fff;
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #333;
   color: #fff;
   width: 100vw;
+  height: 5vh;
   left: 0;
-  bottom: 0;
-  font-size: 0.75rem;
+  top: 95vh;
+  font-size: 1vh;
+  z-index: 1000;
 }
 .footer .footer-content {
-  display: inline-flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   width: 90vw;

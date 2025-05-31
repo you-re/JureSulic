@@ -33,6 +33,19 @@ body
     flex-direction: column
     justify-content: center
     font-size: 3vh
+    overscroll-behavior: none
+    position: fixed
+    inset: 0
+    // /* Prevent scrolling on mobile */
+    touch-action: none
+    -webkit-overflow-scrolling: auto
+    /* Hide scrollbars */
+    scrollbar-width: none
+    &::-webkit-scrollbar
+        display: none
+
+html
+    scroll-behavior: smooth
 
 .menu
     overflow: hidden
@@ -47,7 +60,7 @@ body
     min-height: 100vh
     min-width: 100vw
     position: absolute
-    top: -2vh
+    top: 0
     left: 0
 
     li a
@@ -59,6 +72,7 @@ body
         color: $color-dark
         background-color: $background-dark
         transition: color 0.3s, background-color 0.3s
+        cursor: pointer
 
         // Crosshair SVG icon - Bottom Left (use ::before)
         &::before,
@@ -102,21 +116,62 @@ body
         color: $background-dark
         background-color: $color-dark
 
+.content
+    overflow-y: auto
+    overflow-x: hidden
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: flex-start
+    position: absolute
+    left: 100vw
+    width: 100vw
+    height: 100vh
+    background: #f00
+
+    img, video, audio
+        max-width: 90vw
+        max-height: 70vh
+        border-radius: 0
+        margin: 1rem
+        display: block
+
+    img
+        object-fit: contain
+
+    video, audio
+        outline: none
+        background: $background-gray
+
+    figure
+        margin: 0
+        display: flex
+        flex-direction: column
+        align-items: center
+
+    figcaption
+        font-size: 0.9em
+        color: $color-dark
+        margin-top: 0.5em
+        text-align: center
+
 // Footer
 .footer
-    position: absolute
-    display: inline-flex
+    position: fixed
+    display: flex
     justify-content: space-between
     align-items: center
     background-color: $background-gray
     color: $color-dark
     width: 100vw
+    height: 5vh
     left: 0
-    bottom: 0
-    font-size: 0.75rem
-    
+    top: 95vh
+    font-size: 1vh
+    z-index: 1000
+
     .footer-content
-        display: inline-flex
+        display: flex
         justify-content: space-between
         align-items: center
         width: 90vw
