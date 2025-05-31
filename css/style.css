@@ -107,7 +107,6 @@ html {
   left: 100vw;
   width: 100vw;
   height: 100vh;
-  background: #f00;
 }
 .content img, .content video, .content audio {
   max-width: 90vw;
